@@ -11,10 +11,25 @@
                 My Games
             </h1>
 
-            <a href="{{ route('games.create') }}"
-               class="px-5 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
-                + New Game
-            </a>
+            <div class="flex items-center gap-3">
+
+                <!-- New Game -->
+                <a href="{{ route('games.create') }}"
+                   class="px-5 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+                    + New Game
+                </a>
+
+                <!-- Logout -->
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
         </div>
 
         <!-- Games List -->
