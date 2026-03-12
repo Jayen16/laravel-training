@@ -1,11 +1,43 @@
 <x-app>
     <x-slot:title>
+<<<<<<< HEAD
         {{ ucwords(str_replace('_', ' ', $challenge->category)) }}
     </x-slot:title>
 
+=======
+        {{ $stage->challenge->category }}
+    </x-slot:title>
+    
+    <h1>{{ $game->name }}</h1>
+    @if($stage->isCompleted())
+        <div>Congratulations!</div>
+    @elseif ($stage->isFailed())
+        <div>You failed! The word we are looking for is {{ $stage->challenge->word }}</div>
+    @endif
+
+    <div>
+        Score: {{ $stage->player->score }}
+    </div>
+
+    <div>
+        Category: {{ $stage->challenge->category }}
+    </div>
+    <div>
+        Remaining Lives: {{ $stage->lives }}
+    </div>
+    <div>
+        {{ $stage }}
+    </div>
+    <br />
+    <div>
+        <form method="post" action="{{ route('games.update', compact('game')) }}">
+            @method('put')
+            @csrf
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7
 
     <div class="max-w-4xl mx-auto px-4 py-10 space-y-8">
 
+<<<<<<< HEAD
         <a href="{{ route('games.index') }}"
             class="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
             ← Back
@@ -35,6 +67,16 @@
                     ❌ You failed! The word was
                     <span class="font-bold">{{ $challenge->word }}</span>
                 </div>
+=======
+            @if(!$stage->isOver())
+            <div>
+                <button type="submit" name="skip" value=true>
+                    Skip stage
+                </button>
+            </div>
+            @else
+                <a href="{{ route('games.show', ['game'=>$game, 'next'=>true]) }}">Next stage</a>
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7
             @endif
         </div>
 
@@ -99,4 +141,24 @@
         </div>
 
     </div>
+<<<<<<< HEAD
 </x-app>
+=======
+    @php $topGamers = $game->getTopGamers() @endphp
+    
+    @if($topGamers->isNotEmpty())
+    <br/>
+    <hr/>
+    <div>
+        <h2>Top Players</h2>
+        <ol>
+            @foreach ($topGamers as $gamer)
+            <li>
+                {{ $gamer->name }} - {{ $gamer->player->score }} point(s)
+            </li>
+            @endforeach
+        </ol>
+    </div>
+    @endif
+</x-app>
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7

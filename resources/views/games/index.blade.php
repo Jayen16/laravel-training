@@ -1,10 +1,11 @@
 <x-app>
     <x-slot:title>
-        My Games
+        Available Games
     </x-slot:title>
 
     <div class="max-w-4xl mx-auto py-10 px-4">
 
+<<<<<<< HEAD
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-800">
@@ -30,6 +31,23 @@
                 </form>
 
             </div>
+=======
+    <div>
+        <a href="{{ route('games.create') }}">New Game</a> | 
+        @if($owned)
+        <a href="{{ route('games.index') }}">Show All Games</a>
+        @else
+        <a href="{{ route('games.index', ['owned'=>true]) }}">Show My Games Only</a>        
+        @endif
+    </div>
+    <br/>
+    @forelse ($games as $game)
+        <div>
+            {{ $loop->iteration }}. 
+            <a href="{{ route('games.show', compact('game')) }}">
+                {{ $game->name }} {{ $game->creator->is(auth()->user()) ? '*' : '' }}
+            </a>
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7
         </div>
 
         <!-- Games List -->

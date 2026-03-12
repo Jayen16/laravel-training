@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Classes\ChallengeGenerator;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Models\Game;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class GameController extends Controller
 {
@@ -19,9 +19,14 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        $games = $request->session()->get('games', []);
+        $owned = $request->query('owned', false);
+        if($owned){
+            $games = $request->user()->created_games;
+        } else {
+            $games = Game::get();
+        }
 
-        return view('games.index', compact('games'));
+        return view('games.index', compact('games', 'owned'));
     }
 
     /**
@@ -37,18 +42,11 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        $games = $request->session()->get('games', []);
-
         $data = $request->safe()->only('name');
+        $user = $request->user();
 
-        $id = Str::uuid()->toString();
-
-        $games[$id] = [
-            'name' => $data['name'],
-            'challenge' => $this->challengeGenerator->generate()
-        ];
-
-        $request->session()->put('games', $games);
+        $user->created_games()
+            ->create(['name' => $data['name']]);
 
         return redirect()->route('games.index');
     }
@@ -56,35 +54,18 @@ class GameController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $id)
+    public function show(Request $request, Game $game)
     {
-        $games = $request->session()->get('games', []);
+        $stage = $game->play($request->user(), boolval($request->query('next', false)));
+        $disabledKeys = $stage->getGuesses()->all();
 
-        if(!array_key_exists($id, $games)){
-            abort(404);
-        }
-
-        $game = $games[$id];
-        $name = $game['name'];
-        $challenge = $game['challenge'];
-        $disabledKeys = false;
-        
-        if($challenge->isOver()) {
-            $disabledKeys = true;
-            $game['challenge'] = $this->challengeGenerator->generate();
-            $games[$id] = $game;
-            $request->session()->put('games', $games);          
-        } else {
-            $disabledKeys = $challenge->getGuesses();
-        }
-        
-        return view('games.show', compact('id', 'name', 'challenge', 'disabledKeys'));
+        return view('games.show', compact('game', 'stage', 'disabledKeys'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Game $game)
     {
         // Not Implemented
     }
@@ -92,32 +73,24 @@ class GameController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateGameRequest $request, string $id)
+    public function update(UpdateGameRequest $request, Game $game)
     {
-        $games = $request->session()->get('games', []);
+        $stage = $game->play($request->user());
 
-        if(!array_key_exists($id, $games)){
-            abort(404);
-        }
-
-        $game = $games[$id];
-        $challenge = $game['challenge'];
-
-        $skip = $request->input('skip', false);
-        if($skip){
-            $challenge->skip();
-        }else{
+        if($request->input('skip')){
+            $stage->skip();
+        } else {
             $guess = $request->safe()->guess;
-            $challenge->guess($guess);
+            $stage->guess($guess);
         }
-
-        return redirect()->route('games.show', compact('id'));
+        
+        return redirect()->route('games.show', compact('game'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Game $game)
     {
         //
     }

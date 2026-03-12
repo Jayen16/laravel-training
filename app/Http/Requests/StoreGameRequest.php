@@ -22,14 +22,10 @@ class StoreGameRequest extends FormRequest
      */
     public function rules(): array
     {
-        $games = $this->session()->get('games', []);
-
-        $names = array_map(fn($game) => $game['name'], $games);
-
         return [
             'name' => [
                 'required',
-                Rule::notIn($names)
+                'unique:games'
             ]
         ];
     }
@@ -38,7 +34,7 @@ class StoreGameRequest extends FormRequest
     {
         return [
             'required' => 'The :attribute is required.',
-            'name.not_in' => 'The :attribute is already taken'
+            'unique' => 'The :attribute is already taken'
         ];
     }
 

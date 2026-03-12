@@ -1,4 +1,5 @@
 <x-app>
+<<<<<<< HEAD
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100">
 
@@ -60,4 +61,34 @@
 
 </div>
 
+=======
+    <x-slot:title>
+        Log-in
+    </x-slot:title>
+    <h1>Log-in to Hangman</h1>
+    <form method="post" action="{{ route('auth.login') }}">
+        @csrf
+        <div>
+            <label for="name">
+                Name:
+            </label>
+            <input type="text" name="name" id="name" required value="{{ old('name') }}" />
+            @error('name')
+                <div>{{ $message }}</div>
+            @enderror
+        </div>
+        <div>
+            <label for="password">
+                Password:
+            </label>
+            <input type="password" name="password" id="password" required />
+            @error('password')
+                <div>{{ $message }}</div>
+            @enderror
+        </div>
+        <div>
+            <button type="submit">Log-in</button>
+        </div>
+    </form>
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7
 </x-app>

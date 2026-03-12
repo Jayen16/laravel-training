@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+<<<<<<< HEAD
         // $middleware->
+=======
+        $middleware->redirectUsersTo('/games');
+>>>>>>> 2610de7a3d3e55be173d03c2915e944cd42f5dd7
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
